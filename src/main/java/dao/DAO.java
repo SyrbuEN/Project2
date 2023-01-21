@@ -1,6 +1,8 @@
 package dao;
 
-import models.HumanModel;
+import models.RacerModel;
+import models.TimeEndModel;
+import models.TimeStartModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,72 +13,89 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DAO {
-    //ЗАДАНИЕ 1 - ПРЕОБРАЗУЕМ каждую строку файла в модель человека
-    //1. нужно получить каждую строку из файла построчно
-    //2. нужно понять что в файле описан каждый человек со своим именем, аббревиатурой, названием его команды
-    //3. нужно создать модель этого человека с полями в классе именем, абр, командой
-    //4. нужно разделить каждую строку на эти данные - имя, абр, команда
-    //5. и положить имя, абр, команду в модели. Получится модель каждого человека
 
-    public static List<HumanModel> method() { //рациональнее назвать его теперь getListOfHumans
+    public BufferedReader readFiles(String nameFile){
         ClassLoader classLoader = DAO.class.getClassLoader();
 
-        List<HumanModel> humanModels; //а что если мне надо этого хьюмана использовать еще где-то ниже по коду?
+        try
+                (InputStream inputStream = classLoader.getResourceAsStream(nameFile)) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            return bufferedReader;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+    }
+
+    }
+    public List<RacerModel> getListOfRacers() {
+//        BufferedReader bufferedReader = readFiles("abbreviations.txt");
+
+        List<RacerModel> racerModels;
+
+        ClassLoader classLoader = DAO.class.getClassLoader();
         try
                 (InputStream inputStream = classLoader.getResourceAsStream("abbreviations.txt")) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            // bufferedReader.readLine();
-            //у BufferedReader есть метод, который может читать все строки из файла как поток.
-            humanModels =
-                    bufferedReader.lines() //здесь мы получили каждую строку из файла
-                            .map(line -> line.split("_"))//здесь получаем разделение каждой строки по _,массив строк с подстроками
-                            .map(str -> {   //если нужно произвести несколько действий над str то это пишем в {}
-                                HumanModel humanModel = new HumanModel();
-                                //[ [DRR] [Daniel Ricciardo] [RED BULL RACING TAG HEUER]
-                                //[SVF] [Sebastian Vettel] [FERRARI] ]
-                                //как получить у строки первую подстроку?
-                                humanModel.setHumanAbbreviation(str[0]);
-                                humanModel.setHumanName(str[1]);
-                                humanModel.setHumanCar(str[2]);
-                                System.out.println(humanModel);//ВНИМАНИЕ здесь распечатаются объекты по адресам в памяти.
-                                // ибо не переопределен метод toString
-                                return humanModel;
-                            }).collect(Collectors.toList());
+            racerModels = bufferedReader.lines()
+                    .map(line -> line.split("_"))
+                    .map(str -> {
+                        RacerModel racerModel = new RacerModel();
+                        racerModel.setRacerAbbreviation(str[0]);
+                        racerModel.setRacerName(str[1]);
+                        racerModel.setRacerTeam(str[2]);
+                        return racerModel;
+                    }).collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return humanModels;
+        return racerModels;
     }
 
-    //2. ЗАДАНИЕ 2 - Есть второй файл, где даны аббревиатуры те же и время.
-    //НУЖНО ПО аббревиатуре из первого и второго файла вытащить время. (Т.е.найти человека из второго файла по аббревиатуре
-    //из первого файла и вытащить время этого человека)
-    //сформировать итоговый список с аббревиатурой, именем и временем.
+    public List<TimeStartModel> getListOfStartTimes() {
+        List<TimeStartModel> timeStartModels;
 
-    // получить из файла time.txt данные
-    // распарсить эти данные в модель TimeInfo
-    // сделать результирующую модель в которую будем заталкивать все резалт данные
-//    public static List<TimeInfoModel> getTimeInfo() {
-//        ClassLoader classLoader = Dao.class.getClassLoader();
-//
-//        List<TimeInfoModel> listOfTimesInfo;
-//        try
-//                (InputStream inputStream = classLoader.getResourceAsStream("time.txt")) {
-//            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-//            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-//            listOfTimesInfo =
-//                    bufferedReader.lines()
-//                            .map(line -> line.split("_"))
-//                            .map(str -> {
-//                                TimeInfoModel timeInfoModel = new TimeInfoModel();
-//                                timeInfoModel.setAbr(str[0]);
-//                                timeInfoModel.setTime(str[1]);
-//                                return timeInfoModel;
-//                            }).collect(Collectors.toList());
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return listOfTimesInfo;
-//    }
+        ClassLoader classLoader = DAO.class.getClassLoader();
+        try
+                (InputStream inputStream = classLoader.getResourceAsStream("start.log")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            timeStartModels = bufferedReader.lines()
+                    .map(line -> line.split("_"))
+                    .map(str -> {
+                        TimeStartModel timeStartModel = new TimeStartModel();
+                        timeStartModel.setRacerAbbreviation(str[0].substring(0,3));
+                        timeStartModel.setDateStart(str[0].substring(3));
+                        timeStartModel.setTimeStart(str[1]);
+                        return timeStartModel;
+                    }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return timeStartModels;
+    }
+
+    public List<TimeEndModel> getListOfEndTimes() {
+        ClassLoader classLoader = DAO.class.getClassLoader();
+
+        List<TimeEndModel> timeEndModels;
+        try
+                (InputStream inputStream = classLoader.getResourceAsStream("end.log")) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            timeEndModels = bufferedReader.lines()
+                    .map(line -> line.split("_"))
+                    .map(str -> {
+                        TimeEndModel timeEndModel = new TimeEndModel();
+                        timeEndModel.setRacerAbbreviation(str[0].substring(0,3));
+                        timeEndModel.setDateEnd(str[0].substring(3));
+                        timeEndModel.setTimeEnd(str[1]);
+                        return timeEndModel;
+                    }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return timeEndModels;
+    }
 }
