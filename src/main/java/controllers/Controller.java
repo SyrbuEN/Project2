@@ -8,7 +8,9 @@ import models.ResultModel;
 import models.TimeEndModel;
 import models.TimeStartModel;
 
+import java.io.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -19,7 +21,21 @@ public class Controller {
         List<TimeStartModel> timeStartModelList = dao.getListOfStartTimes();
         List<TimeEndModel> timeEndModelList = dao.getListOfEndTimes();
 
-        List<ResultModel> resultModelList = Service.getResultModel(racerModelList, timeStartModelList, timeEndModelList);
-        System.out.println(resultModelList);
+        Service service = new Service();
+        List<ResultModel> resultModelList = service.getResultModel(racerModelList, timeStartModelList, timeEndModelList);
+
+        int num = 0;
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src\\resources\\file.txt"))) {
+            for (ResultModel element : resultModelList) {
+                System.out.println(++num + ". " + element);
+                bufferedWriter.write(num + ". " + element + "\n");
+                if (num == 15){
+                    System.out.println("---------------------------------------------------------------------");
+                    bufferedWriter.write("---------------------------------------------------------------------" + "\n");
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
