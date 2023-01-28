@@ -15,6 +15,7 @@ public class ResultModel {
     private LocalDateTime timeEndResult;
     private Duration time;
     private String timeStr;
+    private Integer num;
 
     public ResultModel() {
     }
@@ -50,6 +51,10 @@ public class ResultModel {
         return time;
     }
 
+    public Integer getNum() {
+        return num;
+    }
+
     public void setRacerAbbreviation(String racerAbbreviation) {
         this.racerAbbreviation = racerAbbreviation;
     }
@@ -82,8 +87,12 @@ public class ResultModel {
         this.timeStr = min + ":" + sec + "." + nano;
     }
 
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
     @Override
     public String toString() {
-        return String.format("%-25s", racerName, 35) + '|' + String.format("%-30s", racerTeam, 35) + '|' + timeStr;
+        return num + ". " + String.format("%-25s", racerName, 35) + '|' + String.format("%-30s", racerTeam, 35) + '|' + timeStr;
     }
 }

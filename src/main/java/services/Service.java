@@ -6,30 +6,31 @@ import models.TimeEndModel;
 import models.TimeStartModel;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Service {
 
-    public String getDateStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList){
+    public String getDateStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList) {
         return timeStartModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
                 .findAny().orElse(null).getDateStart();
     }
 
-    public String getTimeStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList){
+    public String getTimeStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList) {
         return timeStartModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
                 .findAny().orElse(null).getTimeStart();
     }
 
-    public String getDateEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList){
+    public String getDateEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList) {
         return timeEndModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
                 .findAny().orElse(null).getDateEnd();
     }
 
-    public String getTimeEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList){
+    public String getTimeEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList) {
         return timeEndModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
                 .findAny().orElse(null).getTimeEnd();
     }
 
-    public List<ResultModel> getResultModel(List<RacerModel> racerModelList, List<TimeStartModel> timeStartModelList, List<TimeEndModel> timeEndModelList){
+    public List<ResultModel> getResultModel(List<RacerModel> racerModelList, List<TimeStartModel> timeStartModelList, List<TimeEndModel> timeEndModelList) {
         List<ResultModel> resultModels = racerModelList.stream().map(h ->
                 {
                     ResultModel resultModel = new ResultModel();
@@ -39,7 +40,7 @@ public class Service {
 
                     return resultModel;
                 })
-                .peek(h-> {
+                .peek(h -> {
                     String dateStart = getDateStart(h, timeStartModelList);
                     String timeStart = getTimeStart(h, timeStartModelList);
                     h.setTimeStartResult(dateStart, timeStart);
@@ -50,8 +51,17 @@ public class Service {
 
                     h.setTime();
                 })
-                .sorted((o1, o2)->o1.getTime().compareTo(o2.getTime()))
+                .sorted((o1, o2) -> o1.getTime().compareTo(o2.getTime()))
+                .peek(h -> h.setNum(1)
+                )
                 .toList();
+
+        Optional<ResultModel> rank = resultModels.stream()
+                .reduce((prev, next) -> {
+                    int num = prev.getNum() + next.getNum();
+                    next.setNum(num);
+                    return next;
+                });
 
         return resultModels;
     }

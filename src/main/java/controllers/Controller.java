@@ -1,16 +1,16 @@
 package controllers;
 
 import dao.DAO;
-import services.Service;
-
 import models.RacerModel;
 import models.ResultModel;
 import models.TimeEndModel;
 import models.TimeStartModel;
+import services.Service;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -24,16 +24,25 @@ public class Controller {
         Service service = new Service();
         List<ResultModel> resultModelList = service.getResultModel(racerModelList, timeStartModelList, timeEndModelList);
 
-        int num = 0;
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src\\resources\\file.txt"))) {
-            for (ResultModel element : resultModelList) {
-                System.out.println(++num + ". " + element);
-                bufferedWriter.write(num + ". " + element + "\n");
-                if (num == 15){
-                    System.out.println("---------------------------------------------------------------------");
-                    bufferedWriter.write("---------------------------------------------------------------------" + "\n");
-                }
-            }
+            resultModelList.stream()
+                    .peek(h -> {
+                        System.out.println(h);
+                        try {
+                            bufferedWriter.write(h.toString() + "\n");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if (h.getNum() == 15) {
+                            System.out.println("---------------------------------------------------------------------");
+                            try {
+                                bufferedWriter.write("---------------------------------------------------------------------" + "\n");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    })
+                    .toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
