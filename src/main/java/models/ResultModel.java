@@ -20,31 +20,8 @@ public class ResultModel {
     public ResultModel() {
     }
 
-    public ResultModel(String racerAbbreviation, String racerName, String racerTeam, Duration time) {
-        this.racerAbbreviation = racerAbbreviation;
-        this.racerName = racerName;
-        this.racerTeam = racerTeam;
-        this.time = time;
-    }
-
     public String getRacerAbbreviation() {
         return racerAbbreviation;
-    }
-
-    public String getRacerName() {
-        return racerName;
-    }
-
-    public String getRacerTeam() {
-        return racerTeam;
-    }
-
-    public LocalDateTime getTimeStartResult() {
-        return timeStartResult;
-    }
-
-    public LocalDateTime getTimeEndResult() {
-        return timeEndResult;
     }
 
     public Duration getTime() {

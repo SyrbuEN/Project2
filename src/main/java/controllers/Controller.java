@@ -1,6 +1,6 @@
 package controllers;
 
-import dao.DAO;
+import dao.Dao;
 import models.RacerModel;
 import models.ResultModel;
 import models.TimeEndModel;
@@ -16,7 +16,7 @@ public class Controller {
 
     public static void main(String[] args) {
 
-        DAO dao = new DAO();
+        Dao dao = new Dao();
         List<RacerModel> racerModelList = dao.getListOfRacers();
         List<TimeStartModel> timeStartModelList = dao.getListOfStartTimes();
         List<TimeEndModel> timeEndModelList = dao.getListOfEndTimes();

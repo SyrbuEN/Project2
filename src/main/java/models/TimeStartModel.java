@@ -8,12 +8,6 @@ public class TimeStartModel {
     public TimeStartModel() {
     }
 
-    public TimeStartModel(String racerAbbreviation, String dateStart, String timeStart) {
-        this.racerAbbreviation = racerAbbreviation;
-        this.timeStart = dateStart;
-        this.timeStart = timeStart;
-    }
-
     public String getRacerAbbreviation() {
         return racerAbbreviation;
     }

@@ -12,22 +12,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DAO {
+public class Dao {
 
-    public BufferedReader readFiles(String nameFile) {
-        ClassLoader classLoader = DAO.class.getClassLoader();
-
+    public InputStream readFiles(String nameFile) {
+        ClassLoader classLoader = Dao.class.getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(nameFile);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        return bufferedReader;
+        return inputStream;
     }
 
     public List<RacerModel> getListOfRacers() {
-        List<RacerModel> racerModels;
-
-        try (BufferedReader bufferedReader = readFiles("abbreviations.txt")) {
-            racerModels = bufferedReader.lines()
+        try (InputStream inputStream = readFiles("abbreviations.txt")) {
+            return (new BufferedReader(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
                     .map(line -> line.split("_"))
                     .map(str -> {
                         RacerModel racerModel = new RacerModel();
@@ -35,18 +31,16 @@ public class DAO {
                         racerModel.setRacerName(str[1]);
                         racerModel.setRacerTeam(str[2]);
                         return racerModel;
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toList()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return racerModels;
     }
 
     public List<TimeStartModel> getListOfStartTimes() {
-        List<TimeStartModel> timeStartModels;
-
-        try (BufferedReader bufferedReader = readFiles("start.log")) {
-            timeStartModels = bufferedReader.lines()
+        try (InputStream inputStream = readFiles("start.log")) {
+            return (new BufferedReader(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
                     .map(line -> line.split("_"))
                     .map(str -> {
                         TimeStartModel timeStartModel = new TimeStartModel();
@@ -54,18 +48,16 @@ public class DAO {
                         timeStartModel.setDateStart(str[0].substring(3));
                         timeStartModel.setTimeStart(str[1]);
                         return timeStartModel;
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toList()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return timeStartModels;
     }
 
     public List<TimeEndModel> getListOfEndTimes() {
-        List<TimeEndModel> timeEndModels;
-
-        try (BufferedReader bufferedReader = readFiles("end.log")) {
-            timeEndModels = bufferedReader.lines()
+        try (InputStream inputStream = readFiles("end.log")) {
+            return (new BufferedReader(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
                     .map(line -> line.split("_"))
                     .map(str -> {
                         TimeEndModel timeEndModel = new TimeEndModel();
@@ -73,10 +65,9 @@ public class DAO {
                         timeEndModel.setDateEnd(str[0].substring(3));
                         timeEndModel.setTimeEnd(str[1]);
                         return timeEndModel;
-                    }).collect(Collectors.toList());
+                    }).collect(Collectors.toList()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return timeEndModels;
     }
 }

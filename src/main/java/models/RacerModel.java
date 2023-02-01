@@ -8,12 +8,6 @@ public class RacerModel {
     public RacerModel() {
     }
 
-    public RacerModel(String racerAbbreviation, String racerName, String racerTeam) {
-        this.racerAbbreviation = racerAbbreviation;
-        this.racerName = racerName;
-        this.racerTeam = racerTeam;
-    }
-
     public String getRacerAbbreviation() {
         return racerAbbreviation;
     }

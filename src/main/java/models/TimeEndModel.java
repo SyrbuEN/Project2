@@ -8,12 +8,6 @@ public class TimeEndModel {
     public TimeEndModel() {
     }
 
-    public TimeEndModel(String racerAbbreviation, String dateEnd, String timeEnd) {
-        this.racerAbbreviation = racerAbbreviation;
-        this.dateEnd = dateEnd;
-        this.timeEnd = timeEnd;
-    }
-
     public String getRacerAbbreviation() {
         return racerAbbreviation;
     }

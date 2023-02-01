@@ -5,30 +5,10 @@ import models.ResultModel;
 import models.TimeEndModel;
 import models.TimeStartModel;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class Service {
-
-    public String getDateStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList) {
-        return timeStartModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
-                .findAny().orElse(null).getDateStart();
-    }
-
-    public String getTimeStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList) {
-        return timeStartModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
-                .findAny().orElse(null).getTimeStart();
-    }
-
-    public String getDateEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList) {
-        return timeEndModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
-                .findAny().orElse(null).getDateEnd();
-    }
-
-    public String getTimeEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList) {
-        return timeEndModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
-                .findAny().orElse(null).getTimeEnd();
-    }
 
     public List<ResultModel> getResultModel(List<RacerModel> racerModelList, List<TimeStartModel> timeStartModelList, List<TimeEndModel> timeEndModelList) {
         List<ResultModel> resultModels = racerModelList.stream().map(h ->
@@ -51,12 +31,12 @@ public class Service {
 
                     h.setTime();
                 })
-                .sorted((o1, o2) -> o1.getTime().compareTo(o2.getTime()))
+                .sorted(Comparator.comparing(ResultModel::getTime))
                 .peek(h -> h.setNum(1)
                 )
                 .toList();
 
-        Optional<ResultModel> rank = resultModels.stream()
+        resultModels.stream()
                 .reduce((prev, next) -> {
                     int num = prev.getNum() + next.getNum();
                     next.setNum(num);
@@ -64,5 +44,25 @@ public class Service {
                 });
 
         return resultModels;
+    }
+
+    public String getDateStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList) {
+        return timeStartModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
+                .findAny().orElse(null).getDateStart();
+    }
+
+    public String getTimeStart(ResultModel racerResult, List<TimeStartModel> timeStartModelList) {
+        return timeStartModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
+                .findAny().orElse(null).getTimeStart();
+    }
+
+    public String getDateEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList) {
+        return timeEndModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
+                .findAny().orElse(null).getDateEnd();
+    }
+
+    public String getTimeEnd(ResultModel racerResult, List<TimeEndModel> timeEndModelList) {
+        return timeEndModelList.stream().filter(t -> t.getRacerAbbreviation().equals(racerResult.getRacerAbbreviation()))
+                .findAny().orElse(null).getTimeEnd();
     }
 }
